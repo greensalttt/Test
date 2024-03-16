@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <style>
+        img {
+            width: 140px;
+            height: 170px;
+        }
+
+        .oneCard {
+            overflow: hidden;
+            padding: 10px;
+            width: 150px;
+            height: 170px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            text-align: center;
+        }
+
+        #board {
+            position: absolute;
+            left: 48%;
+            transform: translateX(-50%);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #allButton {
+            position: absolute;
+            left: 50%;
+            margin-top: 660px;
+            transform: translateX(-50%);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        button {
+            margin-top: 80px;
+            width: 90px;
+            height: 90px;
+        }
+
+        #really {
+            position: absolute;
+            left: 52%;
+            transform: translateX(-50%);
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #result {
+            position: absolute;
+            left: 48%;
+            transform: translateX(-50%);
+            text-align: center;
+            white-space: nowrap;
+            margin-top: 20px;
+        }
+
+        #scoreBoard {
+            position: absolute;
+            left: 48%;
+            transform: translateX(-50%);
+            text-align: center;
+            white-space: nowrap;
+            margin-top: 40px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modalContent {
+            background-color: #fefefe;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        select {
+            padding: 8px 12px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-bottom: 10px;
+        }
+
+        #modalB {
+            background-color: darkgreen;
+            color: gainsboro;
+            width: 100%;
+            font-size: 20px;
+            padding: 10px 20px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #playerAName,
+        #playerBName {
+            width: 95%;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        #rankingContainer .modalContent ul li::marker {
+            color: transparent;
+        }
+
+        #ranking {
+            margin-right: 35px;
+        }
+
+        select,
+        input {
+            margin-bottom: 1px;
+        }
+
+        /* .result-text {
+            font-size: 18px;
+            color: gray;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        } */
+
+        .blackPoint {
+            font-size: 18px;
+            color: black;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .redPoint {
+            font-size: 18px;
+            color: red;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        @media only screen and (max-width: 768px) {
+
+
+
+            #allButton {
+                position: absolute;
+                margin-top: 410px;
+                text-align: center;
+            }
+
+            button {
+                width: 70px;
+                height: 70px;
+            }
+
+            .oneCard {
+                transform: translateX(-13%);
+                width: 50px;
+                height: 90px;
+            }
+
+            img {
+                width: 50px;
+                height: 90px;
+            }
+
+            #really {
+                margin-left: 0;
+                text-align: center;
+            }
+        }
+    </style>
+
+    <div id="modalAll" class="modal">
+        <div class="modalContent">
+            <label>Name</label>
+            <input type="text" id="playerAName" placeholder="Black 플레이어 이름"><br>
+            <input type="text" id="playerBName" placeholder="Red 플레이어 이름"><br><br>
+            <label>점수 선택</label>
+            <select id="scoreSelect">
+                <option value="1">단판 내기</option>
+                <option value="3">3점 내기</option>
+                <option value="5">5점 내기</option>
+                <option value="10">10점 내기</option>
+            </select>
+            <button id="modalB" onclick="startGame()">게임 시작</button>
+        </div>
+    </div>
+
+    <div id="rankingContainer" class="modal">
+        <div class="modalContent">
+            <span class="close" onclick="closeRankingModal()">&times;</span>
+            <h2>Lucky People!</h2>
+            <ul id="ranking"></ul>
+        </div>
+    </div>
+
+    <div id="allButton">
+        <div id="scoreBoard"></div><br>
+        <button onclick="blackBack()">블랙 오픈</button>
+        <button onclick="redBack()">레드 오픈</button>
+        <button onclick="cardShuffle()">다음 턴</button>
+        <button onclick="reset()">설정 변경</button>
+        <div id="result"></div>
+    </div>
+
+    <div id="board">
+        <ul>
+            <h4><a id="really">아이스크림 내기용</a></h4><br><br><br>
+            <li class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li>
+
+            <li class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li>
+
+            <li class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li>
+
+            <li class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li>
+
+            <li class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li><br>
+            <li class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li>
+            <li class="oneCard">
+                <a href="#"><img src="" alt=""></a>
+            </li>
+            <li class="oneCard">
+                <a href="#"><img src="" alt=""></a>
+            </li>
+            <li class="oneCard">
+                <a href="#"><img src="" alt=""></a>
+            </li>
+            <li class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li><br>
+
+            <li class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li>
+            <li class="oneCard">
+                <a href="#"><img src="" alt=""></a>
+            </li>
+            <li class="oneCard">
+                <a href="#"><img src="" alt=""></a>
+            </li>
+            <li class="oneCard">
+                <a href="#"><img src="" alt=""></a>
+            </li>
+            <li onclick="clearRanking()" class="oneCard">
+                <a href="#">
+                    <img src="" alt="">
+                </a>
+            </li>
+
+
+        </ul>
+    </div>
+
+
+    <script>
+        const oneCardTong = document.getElementsByClassName("oneCard");
+        const resultElement = document.getElementById('result');
+        const scoreBoardElement = document.getElementById('scoreBoard');
+        var modal = document.getElementById('modalAll');
+        // const noTwo = new Set();
+        let cardArr = []
+        let middle = [];
+        let tmpArr = [];
+        let blackCardCount = 0;
+        let redCardCount = 0;
+        let blackScore = 0;
+        let redScore = 0;
+        let gameStarted = false;
+        let targetScore = 1;
+
+        function closeRankingModal() {
+            document.getElementById('rankingContainer').style.display = 'none';
+        }
+
+        function startGame() {
+            // 플레이어 이름을 가져옴
+            playerAName = document.getElementById('playerAName').value;
+            playerBName = document.getElementById('playerBName').value;
+
+            // 이름이 비어있는지 확인
+            if (playerAName.trim() === '' || playerBName.trim() === '') {
+                // 둘 중 하나라도 이름이 비어있으면 알림을 표시하고 게임을 시작하지 않음
+                alert('플레이어 이름을 입력해주세요.');
+                return;
+            }
+
+            // 게임 시작 로직
+            const selectedScore = parseInt(document.getElementById('scoreSelect').value);
+            chooseScore(selectedScore); // 목표 점수 선택
+            modal.style.display = 'none'; // 모달 닫기
+        }
+
+        // 점수 내기 설정
+        function chooseScore(score) {
+            targetScore = score;
+            cardShuffle();
+            reset();
+        }
+        // 게임 시작 화면
+        window.onload = function () {
+            cardShuffle();
+            modal.style.display = 'block';
+        }
+
+        // 카드 섞기
+        function cardShuffle() {
+            middle = [];
+            tmpArr = [];
+            blackCardCount = 0;
+            redCardCount = 0;
+
+            // 중복을 허용하지 않는 Set을 사용하여 카드를 담습니다.
+            const noTwo = new Set();
+
+            // 0부터 51까지의 숫자를 Set에 추가합니다.
+            for (let i = 0; i < 52; i++) {
+                noTwo.add(i);
+            }
+
+            // Set을 배열로 변환한 뒤 무작위로 섞습니다.
+            cardArr = Array.from(noTwo);
+            for (let i = cardArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cardArr[i], cardArr[j]] = [cardArr[j], cardArr[i]]; // Swap
+            }
+
+            // 랜덤하게 섞인 카드를 보드에 배치하고 결과를 업데이트합니다.
+            for (let i = 0; i < oneCardTong.length; i++) {
+                oneCardTong[i].innerHTML = `<img src=card_img/${cardArr[i]}.png>`;
+                middle.push(cardArr[i]);
+            }
+            allBack();
+            updateResult();
+        }
+
+        // 모든 카드가 뒷면으로 (초기화 함수에 참조)
+        function allBack() {
+            for (let i = 0; i < oneCardTong.length; i++) {
+                if (tmpArr[i] === 100) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/100.png>`;
+                } else if (tmpArr[i] === 100) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/${middle[i]}.png>`;
+                    tmpArr[i] = middle[i];
+                } else if (middle[i] >= 0) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/100.png>`;
+                    tmpArr[i] = 100;
+                }
+            }
+        }
+
+        // 뒤집어진 카드중 블랙 카드만 앞으로 뒤집기
+        function blackBack() {
+            blackCardCount = 0;
+            for (let i = 0; i < oneCardTong.length; i++) {
+                if (tmpArr[i] === 100 && middle[i] <= 25) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/100.png>`;
+                } else if (tmpArr[i] === 100) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/${middle[i]}.png>`;
+                    tmpArr[i] = middle[i];
+                    blackCardCount++;
+                } else if (middle[i] > 25) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/100.png>`;
+                    tmpArr[i] = 100;
+                }
+            }
+            updateResult();
+        }
+
+        // 뒤집어진 카드중 레드 카드만 앞으로 뒤집기
+        function redBack() {
+            redCardCount = 0;
+            for (let i = 0; i < oneCardTong.length; i++) {
+                if (tmpArr[i] === 100 && middle[i] > 25) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/100.png>`;
+                } else if (tmpArr[i] === 100) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/${middle[i]}.png>`;
+                    tmpArr[i] = middle[i];
+                    redCardCount++;
+                } else if (middle[i] <= 25) {
+                    oneCardTong[i].innerHTML = `<img src=card_img/100.png>`;
+                    tmpArr[i] = 100;
+                }
+            }
+            updateResult();
+        }
+
+        // 점수 도달시 게임 종료
+        function checkScore() {
+            if (blackScore === targetScore || redScore === targetScore) {
+                let winner = blackScore > redScore ? `${playerAName}` : `${playerBName}`;
+                alert(`${winner} 플레이어가 목표 점수인 ${targetScore}점을 획득했기에 게임을 종료합니다.`);
+                endGame(winner);
+                startGame();
+            }
+        }
+
+        // 점수판
+        function updateResult() {
+            if (blackCardCount + redCardCount === oneCardTong.length) {
+                if (blackCardCount > redCardCount) {
+                    resultElement.textContent = `BLACK POINT! (블랙: ${blackCardCount}, 레드: ${redCardCount})`;
+                    resultElement.classList.add('blackPoint'); // CSS 클래스 추가
+                    blackScore++;
+                } else if (blackCardCount < redCardCount) {
+                    resultElement.textContent = `RED POINT! (블랙: ${blackCardCount}, 레드: ${redCardCount})`;
+                    resultElement.classList.add('redPoint'); // CSS 클래스 추가
+                    redScore++;
+                } else {
+                    resultElement.textContent = `DRAW! (블랙: ${blackCardCount}, 레드: ${redCardCount})`;
+                }
+                scoreBoardElement.textContent = `점수: ${playerAName} ${blackScore}, ${playerBName} ${redScore}`;
+
+                // 설정한 목표 점수에 도달했을때 점수가 업데이트 되지 않고 게임이 종료되는 현상
+                // setTimeout로 임시 조치
+
+                // checkScore()
+                setTimeout(checkScore, 10);
+            }
+            else {
+                resultElement.textContent = '';
+                resultElement.classList.remove('blackPoint');
+                resultElement.classList.remove('redPoint');
+            }
+        }
+        // 점수 초기화
+        function reset() {
+            blackCardCount = 0;
+            redCardCount = 0;
+            blackScore = 0;
+            redScore = 0;
+            scoreBoardElement.textContent = `점수: ${playerAName} ${blackScore}, ${playerBName} ${redScore}`;
+            resultElement.textContent = '';
+            modal.style.display = 'block';
+        }
+
+        // 승자 정보를 로컬스토리지에 저장
+        function saveWinnerToLocalStorage(winner, playerA, playerB) {
+            let winners = JSON.parse(localStorage.getItem('winners')) || [];
+
+            // 현재 승자 정보 추가
+            winners.push({ winner: winner, playerA: playerA, playerB: playerB });
+
+            // 로컬 스토리지에 저장
+            localStorage.setItem('winners', JSON.stringify(winners));
+        }
+
+        function displayRanking() {
+            // 저장된 승자 정보 가져오기
+            let winners = JSON.parse(localStorage.getItem('winners')) || [];
+
+            // 랭킹판 요소 찾기
+            let rankingElement = document.getElementById('ranking');
+
+            // 랭킹판 초기화
+            rankingElement.innerHTML = '';
+
+            // 승자 정보를 랭킹판에 추가
+            winners.forEach(function (record, index) {
+                let listItem = document.createElement('li');
+                listItem.textContent = `${index + 1}. ${record.winner} (${record.playerA} vs ${record.playerB})`;
+                rankingElement.appendChild(listItem);
+            });
+        }
+        // 게임 종료 시 승자를 저장하고 랭킹판을 업데이트
+        function endGame(winner) {
+            // 승자 정보 저장
+            saveWinnerToLocalStorage(winner, playerAName, playerBName);
+
+            // 랭킹판 업데이트
+            displayRanking();
+            document.getElementById('rankingContainer').style.display = 'block';
+        }
+
+        // 랭킹 초기화
+        function clearRanking() {
+            localStorage.removeItem('winners');
+            displayRanking(); // 랭킹판 업데이트
+        }
+    </script>
+</body>
+
+</html>
